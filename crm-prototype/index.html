@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaCRM Prototype</title>
+  <style>
+    :root {
+      --bg: #eef3f8;
+      --panel: rgba(255, 255, 255, 0.9);
+      --panel-solid: #ffffff;
+      --line: #d8e2ee;
+      --text: #12324b;
+      --muted: #67819a;
+      --brand: #1d5fff;
+      --brand-2: #0ea5a8;
+      --accent: #f59e0b;
+      --danger: #e45555;
+      --success: #17a36b;
+      --shadow: 0 18px 45px rgba(25, 44, 72, 0.12);
+      --radius: 18px;
+      --radius-sm: 12px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(29, 95, 255, 0.14), transparent 28%),
+        radial-gradient(circle at top right, rgba(14, 165, 168, 0.12), transparent 26%),
+        linear-gradient(180deg, #f7faff 0%, var(--bg) 100%);
+      min-height: 100vh;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: 0;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .app {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .sticky-nav {
+      position: sticky;
+      top: 14px;
+      z-index: 20;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(25, 44, 72, 0.10);
+      backdrop-filter: blur(12px);
+    }
+
+    .sticky-nav strong {
+      font-size: 14px;
+      letter-spacing: 0.02em;
+    }
+
+    .sticky-nav-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: #f2f7fc;
+      color: #29455f;
+      border: 1px solid rgba(20, 42, 67, 0.08);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 16px;
+      padding: 22px;
+      background: linear-gradient(135deg, rgba(29, 95, 255, 0.12), rgba(14, 165, 168, 0.10));
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      animation: riseIn 0.45s ease both;
+    }
+
+    .hero-top {
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 12px;
+      color: var(--brand);
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 3vw, 48px);
+      line-height: 1.05;
+    }
+
+    .hero p {
+      margin: 10px 0 0;
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: var(--panel-solid);
+      color: var(--text);
+      box-shadow: 0 8px 24px rgba(24, 52, 89, 0.08);
+      border: 1px solid rgba(12, 31, 54, 0.08);
+      font-weight: 700;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--brand), #284ef5);
+      color: white;
+    }
+
+    .btn.ghost {
+      background: rgba(255, 255, 255, 0.68);
+    }
+
+    .mini-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .kpi {
+      background: var(--panel);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .kpi .label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .kpi .value {
+      display: block;
+      font-size: 28px;
+      font-weight: 900;
+      margin-top: 8px;
+    }
+
+    .kpi .meta {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.9fr;
+      gap: 18px;
+      margin-top: 18px;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .panel,
+    .hero,
+    .chart-card,
+    .kanban-column,
+    .priority-card,
+    .advisor-card,
+    .reminder-card {
+      scroll-margin-top: 92px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .panel-subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr 0.8fr auto;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .toolbar input,
+    .toolbar select,
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.92);
+      color: var(--text);
+      outline: none;
+    }
+
+    .toolbar input:focus,
+    .toolbar select:focus,
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: rgba(29, 95, 255, 0.4);
+      box-shadow: 0 0 0 4px rgba(29, 95, 255, 0.09);
+    }
+
+    .section-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .tab.active {
+      background: #153e87;
+      color: white;
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 14px;
+    }
+
+    .chart-card {
+      background: linear-gradient(180deg, rgba(29, 95, 255, 0.05), rgba(14, 165, 168, 0.04));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .chart-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .bars {
+      display: grid;
+      gap: 10px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 92px 1fr 52px;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .bar-track {
+      height: 12px;
+      background: rgba(19, 49, 81, 0.09);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+      animation: fillIn 0.7s ease both;
+    }
+
+    .heatmap {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .heat-cell {
+      min-height: 88px;
+      border-radius: 16px;
+      padding: 12px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+
+    .heat-cell small { opacity: 0.9; }
+    .heat-cell strong { font-size: 18px; }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .status-new { background: #e9f1ff; color: #1d5fff; }
+    .status-contacted { background: #e8f6ff; color: #0c7fb0; }
+    .status-interested { background: #e9fbf4; color: #0f8e5c; }
+    .status-proposal { background: #fff1df; color: #c87900; }
+    .status-negotiation { background: #f4ebff; color: #7b4bd8; }
+    .status-won { background: #e8fbef; color: #12814e; }
+    .status-lost { background: #fdecec; color: #c43e3e; }
+    .status-follow { background: #f0f4f8; color: #4c6379; }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.94);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1100px;
+    }
+
+    th, td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #e7edf3;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #f7fafe;
+      z-index: 1;
+      color: #395269;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    tr:hover td { background: rgba(29, 95, 255, 0.03); }
+
+    .row-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .icon-btn {
+      padding: 9px 11px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: white;
+      font-weight: 700;
+    }
+
+    .icon-btn.danger { color: var(--danger); }
+
+    .score-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 48px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      font-weight: 900;
+      color: white;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .field label {
+      font-size: 12px;
+      color: #40617e;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    .side-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .priority-card,
+    .advisor-card,
+    .reminder-card {
+      border-radius: 18px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f7fbff);
+    }
+
+    .priority-card {
+      display: grid;
+      gap: 10px;
+    }
+
+    .priority-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pipeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .kanban {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(220px, 1fr));
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .kanban-column {
+      background: rgba(255,255,255,0.82);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+      min-height: 240px;
+    }
+
+    .kanban-column h4 {
+      margin: 0 0 12px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .kanban-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 8px 18px rgba(20, 38, 60, 0.05);
+      margin-bottom: 10px;
+    }
+
+    .kanban-card .title {
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .kanban-card .subtitle,
+    .kanban-card .meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .advisor-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .advisor-card h4,
+    .reminder-card h4 {
+      margin: 0 0 6px;
+      font-size: 15px;
+    }
+
+    .summary-mode .table-section,
+    .summary-mode .pipeline-section {
+      display: none;
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .muted { color: var(--muted); }
+    .tiny { font-size: 12px; }
+
+    .empty {
+      padding: 16px;
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.68);
+    }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fillIn {
+      from { width: 0; }
+    }
+
+    @media (max-width: 1180px) {
+      .grid { grid-template-columns: 1fr; }
+      .mini-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .toolbar { grid-template-columns: 1fr 1fr; }
+      .analytics-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .app { padding: 12px; }
+      .hero { padding: 18px; }
+      .mini-kpis { grid-template-columns: 1fr; }
+      .toolbar { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .kanban { grid-template-columns: repeat(4, minmax(180px, 1fr)); }
+      table { min-width: 980px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="appRoot">
+    <nav class="sticky-nav" aria-label="CRM navigation">
+      <strong>NovaCRM</strong>
+      <div class="sticky-nav-links">
+        <a class="nav-link" href="#dashboardSection">Dashboard</a>
+        <a class="nav-link" href="#pipelineSection">Pipeline</a>
+        <a class="nav-link" href="#customerSection">Customers</a>
+        <a class="nav-link" href="#formSection">Form</a>
+        <a class="nav-link" href="#insightsSection">Insights</a>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="eyebrow">NovaCRM Prototype</div>
+          <h1>Centralize customers, pipeline, and follow-ups in one clear workspace.</h1>
+          <p>
+            This prototype is designed for sales teams that currently track customers in Excel, Google Sheets, Line Chat, and notebooks.
+            It combines customer records, opportunity tracking, dashboard analytics, priority alerts, and simple action guidance in a single SaaS-style CRM.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button class="btn primary" id="addNewBtn">+ Add Customer</button>
+          <button class="btn" id="seedBtn">Reset Demo Data</button>
+          <button class="btn ghost" id="toggleSummaryBtn">Executive Summary Mode</button>
+        </div>
+      </div>
+
+      <div class="mini-kpis" id="kpiStrip"></div>
+    </header>
+
+    <section class="grid" id="crmShell">
+      <div class="stack">
+        <!-- Dashboard section: gives management a quick summary at the top -->
+        <section class="panel" id="dashboardSection">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Dashboard Analytics</h2>
+              <p class="panel-subtitle">A management-friendly overview of customer pipeline health, deal volume, and follow-up pressure.</p>
+            </div>
+            <div class="section-tabs">
+              <span class="tab active">Overview</span>
+              <span class="tab">Pipeline</span>
+              <span class="tab">Customers</span>
+              <span class="tab">Insights</span>
+            </div>
+          </div>
+
+          <div class="analytics-grid">
+            <div class="chart-card">
+              <div class="chart-title">
+                <span>Opportunity Distribution</span>
+                <span class="tiny muted">Lead count by status</span>
+              </div>
+              <div class="bars" id="statusChart"></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title">
+                <span>Opportunity Heat Map</span>
+                <span class="tiny muted">Interest x budget signal</span>
+              </div>
+              <div class="heatmap" id="heatMap"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Pipeline section: simple Kanban-style view for deal stages -->
+        <section class="panel pipeline-section" id="pipelineSection">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Kanban Pipeline</h2>
+              <p class="panel-subtitle">Quick visual tracking for each deal stage. Drag-and-drop can be added later; this prototype keeps it click-friendly.</p>
+            </div>
+          </div>
+          <div class="kanban" id="kanbanBoard"></div>
+        </section>
+
+        <!-- Customer table section: search, filter, and update records fast -->
+        <section class="panel table-section" id="customerSection">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Customer Table</h2>
+              <p class="panel-subtitle">Search, filter, score, and update customers without leaving the page.</p>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <input id="searchInput" type="search" placeholder="Search name, company, phone, email, notes..." />
+            <select id="statusFilter">
+              <option value="">All Statuses</option>
+            </select>
+            <select id="sourceFilter">
+              <option value="">All Lead Sources</option>
+            </select>
+            <button class="btn" id="clearFiltersBtn">Clear Filters</button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Company</th>
+                  <th>Source</th>
+                  <th>Interest / Budget</th>
+                  <th>Status</th>
+                  <th>Score</th>
+                  <th>Last Contact</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="customerTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <aside class="stack">
+        <!-- Customer form: add and edit customer records -->
+        <section class="panel" id="formSection">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title" id="formTitle">Add Customer</h2>
+              <p class="panel-subtitle">Beginner-friendly form for sales staff. Edit mode loads the customer into this panel.</p>
+            </div>
+          </div>
+
+          <form id="customerForm" class="form-grid">
+            <input type="hidden" id="customerId" />
+            <div class="field">
+              <label for="name">Name</label>
+              <input id="name" required placeholder="Customer name" />
+            </div>
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input id="phone" placeholder="Phone number" />
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" type="email" placeholder="Email address" />
+            </div>
+            <div class="field">
+              <label for="company">Company</label>
+              <input id="company" placeholder="Company name" />
+            </div>
+            <div class="field">
+              <label for="businessType">Business Type</label>
+              <input id="businessType" placeholder="Retail, Manufacturing, SaaS..." />
+            </div>
+            <div class="field">
+              <label for="leadSource">Lead Source</label>
+              <select id="leadSource"></select>
+            </div>
+            <div class="field">
+              <label for="interestLevel">Interest Level</label>
+              <select id="interestLevel">
+                <option>Low</option>
+                <option selected>Medium</option>
+                <option>High</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="budget">Budget</label>
+              <input id="budget" type="number" min="0" step="1000" placeholder="0" />
+            </div>
+            <div class="field full">
+              <label for="status">Customer Status</label>
+              <select id="status"></select>
+            </div>
+            <div class="field full">
+              <label for="lastContactDate">Last Contact Date</label>
+              <input id="lastContactDate" type="date" />
+            </div>
+            <div class="field full">
+              <label for="notes">Notes</label>
+              <textarea id="notes" placeholder="Meeting notes, pain points, objections, next steps..."></textarea>
+            </div>
+            <div class="field full">
+              <label for="followUpDate">Follow-up Reminder</label>
+              <input id="followUpDate" type="date" />
+            </div>
+            <div class="field full">
+              <div class="row-actions">
+                <button type="submit" class="btn primary" id="saveBtn">Save Customer</button>
+                <button type="button" class="btn" id="cancelEditBtn">Cancel</button>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <!-- WOW features: the prototype's guided sales helper area -->
+        <section class="panel" id="insightsSection">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Priority Customers</h2>
+              <p class="panel-subtitle">Top opportunities that deserve attention now.</p>
+            </div>
+          </div>
+          <div class="side-list" id="priorityList"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">WOW Features</h2>
+              <p class="panel-subtitle">Lightweight intelligence to help non-technical teams act faster.</p>
+            </div>
+          </div>
+          <div class="advisor-stack" id="advisorStack"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Follow-up Reminders</h2>
+              <p class="panel-subtitle">Upcoming and overdue tasks based on last contact dates.</p>
+            </div>
+          </div>
+          <div class="side-list" id="reminderList"></div>
+        </section>
+      </aside>
+    </section>
+
+    <div class="footer-note">
+      Data persists on the server through a MySQL-backed API. This prototype still leaves authentication, role permissions, and real notifications for a later production phase.
+    </div>
+  </div>
+
+  <script>
+    "use strict";
+
+    // -----------------------------
+    // Constants and API settings
+    // -----------------------------
+    const API_URL = "/api.php";
+
+    const statuses = [
+      "New Lead",
+      "Contacted",
+      "Interested",
+      "Proposal Sent",
+      "Negotiation",
+      "Won",
+      "Lost",
+      "Follow up Later"
+    ];
+
+    const leadSources = [
+      "Website",
+      "Referral",
+      "Line Chat",
+      "Excel Import",
+      "Google Sheets",
+      "Event",
+      "Cold Call",
+      "Partner"
+    ];
+
+    const interestWeights = {
+      Low: 1,
+      Medium: 2,
+      High: 3
+    };
+
+    const statusWeights = {
+      "New Lead": 3,
+      "Contacted": 7,
+      "Interested": 18,
+      "Proposal Sent": 15,
+      "Negotiation": 22,
+      "Won": 28,
+      "Lost": -20,
+      "Follow up Later": 6
+    };
+
+    const sourceWeights = {
+      Website: 12,
+      Referral: 15,
+      "Line Chat": 8,
+      "Excel Import": 3,
+      "Google Sheets": 3,
+      Event: 9,
+      "Cold Call": 6,
+      Partner: 11
+    };
+
+    const dummyCustomers = [
+      {
+        id: crypto.randomUUID(),
+        name: "Nattapong S.",
+        phone: "089-123-4567",
+        email: "nattapong@orchidco.co",
+        company: "Orchid Co., Ltd.",
+        businessType: "Retail",
+        leadSource: "Website",
+        interestLevel: "High",
+        budget: 140000,
+        notes: "Needs centralized sales tracking for 12-store expansion.",
+        lastContactDate: daysAgo(2),
+        followUpDate: daysFromNow(2),
+        status: "Interested",
+        createdAt: nowIso(),
+        updatedAt: nowIso()
+      },
+      {
+        id: crypto.randomUUID(),
+        name: "Somsak P.",
+        phone: "081-444-2222",
+        email: "somsak@brightpath.io",
+        company: "Bright Path Group",
+        businessType: "Services",
+        leadSource: "Referral",
+        interestLevel: "High",
+        budget: 260000,
+        notes: "Executive sponsor wants pipeline visibility and reminders.",
+        lastContactDate: daysAgo(1),
+        followUpDate: daysFromNow(1),
+        status: "Negotiation",
+        createdAt: nowIso(),
+        updatedAt: nowIso()
+      },
+      {
+        id: crypto.randomUUID(),
+        name: "Anong T.",
+        phone: "086-555-9001",
+        email: "anong@northstar.co",
+        company: "North Star Manufacturing",
+        businessType: "Manufacturing",
+        leadSource: "Line Chat",
+        interestLevel: "Medium",
+        budget: 75000,
+        notes: "Requested proposal after demo, compare implementation timeline.",
+        lastContactDate: daysAgo(7),
+        followUpDate: daysFromNow(0),
+        status: "Proposal Sent",
+        createdAt: nowIso(),
+        updatedAt: nowIso()
+      },
+      {
+        id: crypto.randomUUID(),
+        name: "Kanya W.",
+        phone: "090-222-1100",
+        email: "kanya@sunrisehospitality.com",
+        company: "Sunrise Hospitality",
+        businessType: "Hospitality",
+        leadSource: "Event",
+        interestLevel: "Medium",
+        budget: 56000,
+        notes: "Interested in marketing + CRM for follow-up automation.",
+        lastContactDate: daysAgo(11),
+        followUpDate: daysFromNow(3),
+        status: "Contacted",
+        createdAt: nowIso(),
+        updatedAt: nowIso()
+      },
+      {
+        id: crypto.randomUUID(),
+        name: "Mali C.",
+        phone: "098-888-7722",
+        email: "mali@bluepeak.com",
+        company: "BluePeak Trading",
+        businessType: "Wholesale",
+        leadSource: "Google Sheets",
+        interestLevel: "Low",
+        budget: 18000,
+        notes: "Old lead imported from spreadsheet, needs qualification.",
+        lastContactDate: daysAgo(28),
+        followUpDate: daysFromNow(4),
+        status: "Follow up Later",
+        createdAt: nowIso(),
+        updatedAt: nowIso()
+      },
+      {
+        id: crypto.randomUUID(),
+        name: "Tawan R.",
+        phone: "088-505-8833",
+        email: "tawan@neofoods.co",
+        company: "Neo Foods",
+        businessType: "F&B",
+        leadSource: "Website",
+        interestLevel: "High",
+        budget: 98000,
+        notes: "Ready for demo, wants comparison with existing tools.",
+        lastContactDate: daysAgo(3),
+        followUpDate: daysFromNow(1),
+        status: "Proposal Sent",
+        createdAt: nowIso(),
+        updatedAt: nowIso()
+      },
+      {
+        id: crypto.randomUUID(),
+        name: "Ploy J.",
+        phone: "092-777-0001",
+        email: "ploy@marketpulse.asia",
+        company: "MarketPulse Asia",
+        businessType: "Marketing",
+        leadSource: "Referral",
+        interestLevel: "High",
+        budget: 320000,
+        notes: "Strong strategic fit. Focus on executive reporting and team usage.",
+        lastContactDate: daysAgo(0),
+        followUpDate: daysFromNow(3),
+        status: "Negotiation",
+        createdAt: nowIso(),
+        updatedAt: nowIso()
+      },
+      {
+        id: crypto.randomUUID(),
+        name: "Arisa K.",
+        phone: "085-900-1234",
+        email: "arisa@evergreen.co",
+        company: "Evergreen Logistics",
+        businessType: "Logistics",
+        leadSource: "Cold Call",
+        interestLevel: "Low",
+        budget: 45000,
+        notes: "Not a fit yet, keep in nurture sequence.",
+        lastContactDate: daysAgo(20),
+        followUpDate: daysFromNow(10),
+        status: "Lost",
+        createdAt: nowIso(),
+        updatedAt: nowIso()
+      }
+    ];
+
+    // -----------------------------
+    // DOM references
+    // -----------------------------
+    const appRoot = document.getElementById("appRoot");
+    const kpiStrip = document.getElementById("kpiStrip");
+    const statusChart = document.getElementById("statusChart");
+    const heatMap = document.getElementById("heatMap");
+    const kanbanBoard = document.getElementById("kanbanBoard");
+    const customerTableBody = document.getElementById("customerTableBody");
+    const priorityList = document.getElementById("priorityList");
+    const advisorStack = document.getElementById("advisorStack");
+    const reminderList = document.getElementById("reminderList");
+    const searchInput = document.getElementById("searchInput");
+    const statusFilter = document.getElementById("statusFilter");
+    const sourceFilter = document.getElementById("sourceFilter");
+    const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+    const toggleSummaryBtn = document.getElementById("toggleSummaryBtn");
+    const seedBtn = document.getElementById("seedBtn");
+    const addNewBtn = document.getElementById("addNewBtn");
+
+    const form = document.getElementById("customerForm");
+    const formTitle = document.getElementById("formTitle");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
+    const saveBtn = document.getElementById("saveBtn");
+
+    const formFields = {
+      id: document.getElementById("customerId"),
+      name: document.getElementById("name"),
+      phone: document.getElementById("phone"),
+      email: document.getElementById("email"),
+      company: document.getElementById("company"),
+      businessType: document.getElementById("businessType"),
+      leadSource: document.getElementById("leadSource"),
+      interestLevel: document.getElementById("interestLevel"),
+      budget: document.getElementById("budget"),
+      notes: document.getElementById("notes"),
+      lastContactDate: document.getElementById("lastContactDate"),
+      status: document.getElementById("status"),
+      followUpDate: document.getElementById("followUpDate")
+    };
+
+    // -----------------------------
+    // State
+    // -----------------------------
+    let customers = [];
+    let uiState = { summaryMode: false };
+    let filters = {
+      search: "",
+      status: "",
+      source: ""
+    };
+
+    // -----------------------------
+    // Initialization
+    // -----------------------------
+    initSelectOptions();
+    bindEvents();
+    bootstrap();
+
+    // -----------------------------
+    // Event wiring
+    // -----------------------------
+    function bindEvents() {
+      form.addEventListener("submit", handleSaveCustomer);
+      cancelEditBtn.addEventListener("click", clearForm);
+      addNewBtn.addEventListener("click", () => {
+        clearForm();
+        document.getElementById("name").focus();
+      });
+      seedBtn.addEventListener("click", resetDemoData);
+      toggleSummaryBtn.addEventListener("click", toggleSummaryMode);
+
+      searchInput.addEventListener("input", event => {
+        filters.search = event.target.value.trim().toLowerCase();
+        renderAll();
+      });
+
+      statusFilter.addEventListener("change", event => {
+        filters.status = event.target.value;
+        renderAll();
+      });
+
+      sourceFilter.addEventListener("change", event => {
+        filters.source = event.target.value;
+        renderAll();
+      });
+
+      clearFiltersBtn.addEventListener("click", () => {
+        filters = { search: "", status: "", source: "" };
+        searchInput.value = "";
+        statusFilter.value = "";
+        sourceFilter.value = "";
+        renderAll();
+      });
+    }
+
+    // -----------------------------
+    // Data loading and saving
+    // -----------------------------
+    async function bootstrap() {
+      try {
+        const state = await loadState();
+        customers = Array.isArray(state.customers) && state.customers.length
+          ? state.customers.map(enrichCustomer)
+          : dummyCustomers.map(enrichCustomer);
+        uiState = Object.assign({ summaryMode: false }, state.uiState || {});
+
+        if (!state.customers || !state.customers.length) {
+          await saveState();
+        }
+      } catch (error) {
+        console.error("Failed to load server state:", error);
+        customers = dummyCustomers.map(enrichCustomer);
+        uiState = { summaryMode: false };
+      }
+
+      syncSummaryMode();
+      renderAll();
+    }
+
+    async function loadState() {
+      const response = await fetch(`${API_URL}?action=bootstrap`, {
+        headers: { Accept: "application/json" }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Bootstrap request failed with ${response.status}`);
+      }
+
+      return response.json();
+    }
+
+    async function saveState() {
+      const response = await fetch(`${API_URL}?action=save`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify({ customers, uiState })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Save request failed with ${response.status}`);
+      }
+
+      return response.json();
+    }
+
+    async function resetDemoData() {
+      if (!confirm("Reset the demo data? This will replace your current local changes.")) return;
+      customers = dummyCustomers.map(enrichCustomer);
+      await saveState();
+      clearForm();
+      renderAll();
+    }
+
+    // -----------------------------
+    // Customer helpers
+    // -----------------------------
+    // This helper normalizes each customer so the rest of the app can assume the fields exist.
+    function enrichCustomer(customer) {
+      const enriched = { ...customer };
+      enriched.budget = Number(enriched.budget || 0);
+      enriched.leadSource = enriched.leadSource || "Website";
+      enriched.interestLevel = enriched.interestLevel || "Medium";
+      enriched.status = enriched.status || "New Lead";
+      enriched.lastContactDate = enriched.lastContactDate || daysAgo(0);
+      enriched.followUpDate = enriched.followUpDate || daysFromNow(3);
+      enriched.score = calculateLeadScore(enriched);
+      enriched.risk = calculateDealRisk(enriched);
+      enriched.priority = calculatePriority(enriched);
+      return enriched;
+    }
+
+    // Lead score logic:
+    // 1) High budget adds more points.
+    // 2) Strong interest and better sources add more points.
+    // 3) Later-stage statuses add more points.
+    // 4) Stale or lost deals lose points.
+    function calculateLeadScore(customer) {
+      let score = 15;
+
+      const budget = Number(customer.budget || 0);
+      if (budget >= 250000) score += 28;
+      else if (budget >= 100000) score += 22;
+      else if (budget >= 50000) score += 16;
+      else if (budget >= 20000) score += 10;
+      else if (budget > 0) score += 4;
+
+      score += (interestWeights[customer.interestLevel] || 2) * 8;
+      score += sourceWeights[customer.leadSource] || 5;
+      score += statusWeights[customer.status] || 0;
+
+      const lastContactDays = daysBetween(customer.lastContactDate, todayIso());
+      if (lastContactDays <= 2) score += 8;
+      else if (lastContactDays <= 7) score += 4;
+      else if (lastContactDays >= 21) score -= 8;
+
+      if (customer.status === "Won") score += 10;
+      if (customer.status === "Lost") score -= 15;
+
+      return clamp(Math.round(score), 0, 100);
+    }
+
+    // Deal risk logic keeps the prototype simple: overdue follow-up and stale contact create risk.
+    function calculateDealRisk(customer) {
+      const overdue = daysBetween(customer.followUpDate, todayIso()) > 0;
+      const stale = daysBetween(customer.lastContactDate, todayIso()) > 10;
+
+      if (customer.status === "Lost") return "Closed";
+      if (customer.status === "Negotiation" && overdue) return "High";
+      if (customer.status === "Proposal Sent" && stale) return "Medium";
+      if (customer.status === "Interested" && customer.score >= 75) return "Low";
+      if (overdue || stale) return "Medium";
+      return "Low";
+    }
+
+    // Priority is a simple ranking for the dashboard cards and top-of-list reminders.
+    function calculatePriority(customer) {
+      const riskScore = customer.risk === "High" ? 3 : customer.risk === "Medium" ? 2 : 1;
+      const followUpDue = daysBetween(customer.followUpDate, todayIso()) > 0 ? 2 : 0;
+      return customer.score + riskScore * 10 + followUpDue * 5;
+    }
+
+    function handleSaveCustomer(event) {
+      event.preventDefault();
+
+      const payload = {
+        id: formFields.id.value || crypto.randomUUID(),
+        name: formFields.name.value.trim(),
+        phone: formFields.phone.value.trim(),
+        email: formFields.email.value.trim(),
+        company: formFields.company.value.trim(),
+        businessType: formFields.businessType.value.trim(),
+        leadSource: formFields.leadSource.value,
+        interestLevel: formFields.interestLevel.value,
+        budget: Number(formFields.budget.value || 0),
+        notes: formFields.notes.value.trim(),
+        lastContactDate: formFields.lastContactDate.value || todayIso(),
+        status: formFields.status.value,
+        followUpDate: formFields.followUpDate.value || addDays(todayIso(), 3),
+        createdAt: findCustomer(formFields.id.value)?.createdAt || nowIso(),
+        updatedAt: nowIso()
+      };
+
+      if (!payload.name) {
+        alert("Please enter a customer name.");
+        return;
+      }
+
+      const enriched = enrichCustomer(payload);
+      const index = customers.findIndex(customer => customer.id === enriched.id);
+
+      if (index >= 0) {
+        customers[index] = enriched;
+      } else {
+        customers.unshift(enriched);
+      }
+
+      saveState();
+      clearForm();
+      renderAll();
+    }
+
+    function deleteCustomer(id) {
+      const customer = findCustomer(id);
+      if (!customer) return;
+      const ok = confirm(`Delete ${customer.name}? This cannot be undone.`);
+      if (!ok) return;
+      customers = customers.filter(entry => entry.id !== id);
+      saveState();
+      renderAll();
+    }
+
+    function editCustomer(id) {
+      const customer = findCustomer(id);
+      if (!customer) return;
+
+      formTitle.textContent = "Edit Customer";
+      saveBtn.textContent = "Update Customer";
+      formFields.id.value = customer.id;
+      formFields.name.value = customer.name || "";
+      formFields.phone.value = customer.phone || "";
+      formFields.email.value = customer.email || "";
+      formFields.company.value = customer.company || "";
+      formFields.businessType.value = customer.businessType || "";
+      formFields.leadSource.value = customer.leadSource || "Website";
+      formFields.interestLevel.value = customer.interestLevel || "Medium";
+      formFields.budget.value = customer.budget ?? 0;
+      formFields.notes.value = customer.notes || "";
+      formFields.lastContactDate.value = customer.lastContactDate || todayIso();
+      formFields.status.value = customer.status || "New Lead";
+      formFields.followUpDate.value = customer.followUpDate || addDays(todayIso(), 3);
+      document.getElementById("crmShell").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function changeStatus(id, status) {
+      const customer = findCustomer(id);
+      if (!customer) return;
+      customer.status = status;
+      customer.updatedAt = nowIso();
+      customer.score = calculateLeadScore(customer);
+      customer.risk = calculateDealRisk(customer);
+      customer.priority = calculatePriority(customer);
+      saveState();
+      renderAll();
+    }
+
+    function clearForm() {
+      form.reset();
+      formFields.id.value = "";
+      formFields.leadSource.value = "Website";
+      formFields.interestLevel.value = "Medium";
+      formFields.status.value = "New Lead";
+      formFields.lastContactDate.value = todayIso();
+      formFields.followUpDate.value = addDays(todayIso(), 3);
+      formTitle.textContent = "Add Customer";
+      saveBtn.textContent = "Save Customer";
+    }
+
+    function findCustomer(id) {
+      return customers.find(customer => customer.id === id);
+    }
+
+    // -----------------------------
+    // Rendering
+    // -----------------------------
+    function renderAll() {
+      customers = customers.map(enrichCustomer).sort((a, b) => {
+        const scoreGap = b.priority - a.priority;
+        return scoreGap !== 0 ? scoreGap : b.score - a.score;
+      });
+
+      syncSummaryMode();
+      renderFilters();
+      renderKpis();
+      renderCharts();
+      renderKanban();
+      renderTable();
+      renderPriorityList();
+      renderAdvisorStack();
+      renderReminders();
+    }
+
+    function renderFilters() {
+      fillSelect(statusFilter, statuses, "All Statuses");
+      fillSelect(sourceFilter, leadSources, "All Lead Sources");
+      statusFilter.value = filters.status;
+      sourceFilter.value = filters.source;
+    }
+
+    function renderKpis() {
+      const active = customers.filter(customer => !["Won", "Lost"].includes(customer.status));
+      const followUpsDue = customers.filter(customer => daysBetween(customer.followUpDate, todayIso()) > 0).length;
+      const totalBudget = active.reduce((sum, customer) => sum + Number(customer.budget || 0), 0);
+      const averageScore = customers.length ? Math.round(customers.reduce((sum, customer) => sum + customer.score, 0) / customers.length) : 0;
+
+      const kpis = [
+        { label: "Total Customers", value: customers.length, meta: "All stored leads" },
+        { label: "Active Deals", value: active.length, meta: "In progress pipeline" },
+        { label: "Pipeline Value", value: formatCurrency(totalBudget), meta: "Open opportunity budget" },
+        { label: "Average Score", value: averageScore, meta: "Lead quality signal" }
+      ];
+
+      kpiStrip.innerHTML = kpis.map(kpi => `
+        <article class="kpi">
+          <div class="label">${kpi.label}</div>
+          <span class="value">${kpi.value}</span>
+          <div class="meta">${kpi.meta}</div>
+        </article>
+      `).join("");
+
+      const reminderCount = reminderList.querySelectorAll(".reminder-card").length;
+      if (reminderCount && followUpsDue > 0) {
+        toggleSummaryBtn.dataset.followUps = String(followUpsDue);
+      }
+    }
+
+    function renderCharts() {
+      const statusCounts = statuses.map(status => ({
+        status,
+        count: customers.filter(customer => customer.status === status).length
+      }));
+      const max = Math.max(1, ...statusCounts.map(entry => entry.count));
+
+      statusChart.innerHTML = statusCounts.map(entry => {
+        const pct = Math.round((entry.count / max) * 100);
+        return `
+          <div class="bar-row">
+            <span>${entry.status}</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+            <strong>${entry.count}</strong>
+          </div>
+        `;
+      }).join("");
+
+      const buckets = [
+        { name: "Warm", filter: customer => customer.interestLevel === "Low" && customer.budget < 50000, color: "linear-gradient(135deg, #84c5ff, #4f86ff)" },
+        { name: "Growing", filter: customer => customer.interestLevel === "Medium" && customer.budget >= 50000, color: "linear-gradient(135deg, #34c6a5, #0ea5a8)" },
+        { name: "Strong", filter: customer => customer.interestLevel === "High" && customer.budget >= 100000, color: "linear-gradient(135deg, #f59e0b, #ff7a18)" },
+        { name: "Low Budget", filter: customer => customer.budget < 20000, color: "linear-gradient(135deg, #94a3b8, #64748b)" },
+        { name: "Need Follow-up", filter: customer => daysBetween(customer.followUpDate, todayIso()) > 0, color: "linear-gradient(135deg, #ef4444, #d946ef)" },
+        { name: "Negotiation", filter: customer => customer.status === "Negotiation", color: "linear-gradient(135deg, #a855f7, #6366f1)" },
+        { name: "High Score", filter: customer => customer.score >= 75, color: "linear-gradient(135deg, #14b8a6, #22c55e)" },
+        { name: "At Risk", filter: customer => customer.risk === "High", color: "linear-gradient(135deg, #fb7185, #ef4444)" },
+        { name: "Won", filter: customer => customer.status === "Won", color: "linear-gradient(135deg, #22c55e, #16a34a)" }
+      ];
+
+      heatMap.innerHTML = buckets.map(bucket => {
+        const count = customers.filter(bucket.filter).length;
+        const intensity = clamp(count * 22 + 18, 18, 100);
+        return `
+          <div class="heat-cell" style="background:${bucket.color}; opacity:${intensity / 100}">
+            <small>${bucket.name}</small>
+            <strong>${count}</strong>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderKanban() {
+      const kanbanStatuses = ["New Lead", "Contacted", "Interested", "Proposal Sent"];
+      kanbanBoard.innerHTML = kanbanStatuses.map(status => {
+        const items = customers.filter(customer => customer.status === status).slice(0, 6);
+        return `
+          <div class="kanban-column">
+            <h4>
+              <span>${status}</span>
+              <span class="status-badge ${statusClass(status)}">${items.length}</span>
+            </h4>
+            ${items.length ? items.map(renderKanbanCard).join("") : '<div class="empty">No deals in this stage yet.</div>'}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderKanbanCard(customer) {
+      return `
+        <article class="kanban-card">
+          <div class="title">${escapeHtml(customer.name)}</div>
+          <div class="subtitle">${escapeHtml(customer.company || "No company")} · ${escapeHtml(customer.businessType || "General")}</div>
+          <div class="meta">Score ${customer.score} · Budget ${formatCurrency(customer.budget)}</div>
+          <div style="margin-top:10px; display:flex; gap:6px; flex-wrap:wrap;">
+            <span class="status-badge ${statusClass(customer.status)}">${customer.status}</span>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderTable() {
+      const visible = customers.filter(customer => {
+        const haystack = [
+          customer.name,
+          customer.phone,
+          customer.email,
+          customer.company,
+          customer.businessType,
+          customer.leadSource,
+          customer.notes
+        ].join(" ").toLowerCase();
+
+        const matchesSearch = !filters.search || haystack.includes(filters.search);
+        const matchesStatus = !filters.status || customer.status === filters.status;
+        const matchesSource = !filters.source || customer.leadSource === filters.source;
+        return matchesSearch && matchesStatus && matchesSource;
+      });
+
+      if (!visible.length) {
+        customerTableBody.innerHTML = `
+          <tr>
+            <td colspan="8">
+              <div class="empty">No customers match the current search and filter settings.</div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      customerTableBody.innerHTML = visible.map(customer => `
+        <tr>
+          <td>
+            <strong>${escapeHtml(customer.name)}</strong><br />
+            <span class="muted tiny">${escapeHtml(customer.phone || "-")}<br />${escapeHtml(customer.email || "-")}</span>
+          </td>
+          <td>
+            <strong>${escapeHtml(customer.company || "-")}</strong><br />
+            <span class="muted tiny">${escapeHtml(customer.businessType || "-")}</span>
+          </td>
+          <td>${escapeHtml(customer.leadSource)}</td>
+          <td>
+            <div>${escapeHtml(customer.interestLevel)}</div>
+            <div class="muted tiny">${formatCurrency(customer.budget)}</div>
+          </td>
+          <td>
+            <select data-status-select="${customer.id}" aria-label="Change status for ${escapeHtml(customer.name)}">
+              ${statuses.map(status => `<option value="${status}" ${status === customer.status ? "selected" : ""}>${status}</option>`).join("")}
+            </select>
+          </td>
+          <td>
+            <span class="score-pill" style="background:${scoreColor(customer.score)}">${customer.score}</span>
+            <div class="tiny muted" style="margin-top:6px;">Risk: ${customer.risk}</div>
+          </td>
+          <td>
+            ${formatDate(customer.lastContactDate)}<br />
+            <span class="tiny muted">Follow-up: ${formatDate(customer.followUpDate)}</span>
+          </td>
+          <td>
+            <div class="row-actions">
+              <button class="icon-btn" data-edit="${customer.id}">Edit</button>
+              <button class="icon-btn danger" data-delete="${customer.id}">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+
+      customerTableBody.querySelectorAll("[data-edit]").forEach(button => {
+        button.addEventListener("click", () => editCustomer(button.dataset.edit));
+      });
+
+      customerTableBody.querySelectorAll("[data-delete]").forEach(button => {
+        button.addEventListener("click", () => deleteCustomer(button.dataset.delete));
+      });
+
+      customerTableBody.querySelectorAll("[data-status-select]").forEach(select => {
+        select.addEventListener("change", () => changeStatus(select.dataset.statusSelect, select.value));
+      });
+    }
+
+    function renderPriorityList() {
+      const list = [...customers]
+        .sort((a, b) => b.priority - a.priority)
+        .slice(0, 4);
+
+      priorityList.innerHTML = list.map(customer => {
+        const nextAction = getNextBestAction(customer);
+        return `
+          <article class="priority-card">
+            <div class="priority-meta">
+              <span class="status-badge ${statusClass(customer.status)}">${customer.status}</span>
+              <span class="status-badge" style="background:${priorityShade(customer.priority)}; color:white;">Priority ${Math.round(customer.priority)}</span>
+            </div>
+            <div>
+              <h4>${escapeHtml(customer.name)}</h4>
+              <div class="tiny muted">${escapeHtml(customer.company || "No company")}</div>
+            </div>
+            <div class="tiny">${escapeHtml(nextAction)}</div>
+            <div class="tiny muted">Score ${customer.score} · Budget ${formatCurrency(customer.budget)} · Risk ${customer.risk}</div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderAdvisorStack() {
+      const insight = buildExecutiveInsight();
+      const customer = [...customers].sort((a, b) => b.priority - a.priority)[0];
+      const followUpMessage = customer ? buildFollowUpMessage(customer) : "No customer available.";
+
+      advisorStack.innerHTML = `
+        <article class="advisor-card">
+          <h4>AI Sales Advisor</h4>
+          <div class="tiny muted">${insight}</div>
+        </article>
+        <article class="advisor-card">
+          <h4>Next Best Action</h4>
+          <div class="tiny muted">${customer ? getNextBestAction(customer) : "No customer selected."}</div>
+        </article>
+        <article class="advisor-card">
+          <h4>Smart Follow-up Message Generator</h4>
+          <div class="tiny muted">${escapeHtml(followUpMessage)}</div>
+        </article>
+        <article class="advisor-card">
+          <h4>Deal Risk Alert</h4>
+          <div class="tiny muted">${buildRiskAlert()}</div>
+        </article>
+      `;
+    }
+
+    function renderReminders() {
+      const due = [...customers]
+        .filter(customer => daysBetween(customer.followUpDate, todayIso()) > 0)
+        .sort((a, b) => daysBetween(b.followUpDate, todayIso()) - daysBetween(a.followUpDate, todayIso()));
+
+      if (!due.length) {
+        reminderList.innerHTML = `<div class="empty">No follow-up reminders due right now.</div>`;
+        return;
+      }
+
+      reminderList.innerHTML = due.slice(0, 4).map(customer => {
+        const overdueDays = daysBetween(customer.followUpDate, todayIso());
+        return `
+          <article class="reminder-card">
+            <h4>${escapeHtml(customer.name)}</h4>
+            <div class="tiny muted">${escapeHtml(customer.company || "-")} · ${escapeHtml(customer.status)}</div>
+            <div class="tiny" style="margin-top:8px;">
+              ${overdueDays > 0 ? `<strong style="color:var(--danger);">Overdue by ${overdueDays} day(s)</strong>` : `Due today`}
+            </div>
+            <div class="tiny muted">Suggested action: ${escapeHtml(getNextBestAction(customer))}</div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    // -----------------------------
+    // Insight logic
+    // -----------------------------
+    // The executive summary reads like a short manager-friendly briefing.
+    function buildExecutiveInsight() {
+      const total = customers.length;
+      const highScore = customers.filter(customer => customer.score >= 75).length;
+      const overdue = customers.filter(customer => daysBetween(customer.followUpDate, todayIso()) > 0).length;
+      const negotiation = customers.filter(customer => customer.status === "Negotiation").length;
+      const won = customers.filter(customer => customer.status === "Won").length;
+      const conversion = total ? Math.round((won / total) * 100) : 0;
+
+      if (!total) return "No customer records yet. Start by importing or creating leads.";
+
+      return `You have ${highScore} high-value leads, ${overdue} follow-up reminders, and ${negotiation} deals in negotiation. Estimated close rate signal is ${conversion}% based on won deals in the sample dataset.`;
+    }
+
+    // Next Best Action keeps recommendations short and practical for sales staff.
+    function getNextBestAction(customer) {
+      const overdue = daysBetween(customer.followUpDate, todayIso()) > 0;
+      if (customer.status === "New Lead") return "Call the lead, qualify budget, and set the first meeting.";
+      if (customer.status === "Contacted") return "Send a short recap and schedule a demo.";
+      if (customer.status === "Interested") return "Share pricing options and ask for timeline.";
+      if (customer.status === "Proposal Sent") return overdue ? "Follow up on the proposal and ask about objections." : "Check decision-making timeline.";
+      if (customer.status === "Negotiation") return overdue ? "Escalate with a decision-maker call." : "Review terms and identify deal blockers.";
+      if (customer.status === "Won") return "Hand off to onboarding and confirm next implementation step.";
+      if (customer.status === "Lost") return "Place in nurture flow and schedule a re-engagement touchpoint.";
+      return overdue ? "Send a friendly follow-up and confirm next meeting." : "Keep in nurture and update contact notes.";
+    }
+
+    // Smart follow-up generator writes a friendly message draft using the current customer context.
+    function buildFollowUpMessage(customer) {
+      const firstName = customer.name.split(" ")[0];
+      const tone = customer.status === "Negotiation" ? "I wanted to check in on the decision timeline" : "I wanted to follow up on our last discussion";
+      return `Hi ${firstName}, ${tone}. Based on your ${customer.businessType || "business"} needs and budget around ${formatCurrency(customer.budget)}, I can share a clear next step for ${customer.company || "your team"}. Let me know a convenient time to continue.`;
+    }
+
+    // Deal risk alert gives a simple manager view of where attention is needed.
+    function buildRiskAlert() {
+      const highRisk = customers.filter(customer => customer.risk === "High");
+      if (!highRisk.length) return "No high-risk deals detected. Follow-up timing looks healthy.";
+      return `${highRisk.length} deal(s) need attention. Focus on overdue follow-ups, stale negotiations, and deals with low activity.`;
+    }
+
+    function scoreColor(score) {
+      if (score >= 80) return "linear-gradient(135deg, #16a34a, #22c55e)";
+      if (score >= 65) return "linear-gradient(135deg, #0ea5a8, #14b8a6)";
+      if (score >= 45) return "linear-gradient(135deg, #f59e0b, #f97316)";
+      return "linear-gradient(135deg, #ef4444, #f43f5e)";
+    }
+
+    function priorityShade(priority) {
+      if (priority >= 100) return "linear-gradient(135deg, #153e87, #1d5fff)";
+      if (priority >= 85) return "linear-gradient(135deg, #0ea5a8, #14b8a6)";
+      if (priority >= 70) return "linear-gradient(135deg, #f59e0b, #fb923c)";
+      return "linear-gradient(135deg, #64748b, #94a3b8)";
+    }
+
+    // -----------------------------
+    // UI helpers
+    // -----------------------------
+    function initSelectOptions() {
+      fillSelect(formFields.leadSource, leadSources, "Select lead source");
+      fillSelect(formFields.status, statuses, "Select status");
+    }
+
+    function fillSelect(select, values, placeholder) {
+      const current = select.value;
+      select.innerHTML = placeholder
+        ? `<option value="">${placeholder}</option>`
+        : "";
+
+      values.forEach(value => {
+        if (value === "") return;
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+
+      if (current && values.includes(current)) {
+        select.value = current;
+      } else if (placeholder && !current) {
+        select.value = "";
+      } else if (values.length && !select.value) {
+        select.value = values[0];
+      }
+    }
+
+    // Summary mode hides the long sections so the app can be presented like a quick executive briefing.
+    function syncSummaryMode() {
+      appRoot.classList.toggle("summary-mode", Boolean(uiState.summaryMode));
+      toggleSummaryBtn.textContent = uiState.summaryMode ? "Exit Summary Mode" : "Executive Summary Mode";
+    }
+
+    function toggleSummaryMode() {
+      uiState.summaryMode = !uiState.summaryMode;
+      saveState();
+      syncSummaryMode();
+    }
+
+    function statusClass(status) {
+      const map = {
+        "New Lead": "status-new",
+        "Contacted": "status-contacted",
+        "Interested": "status-interested",
+        "Proposal Sent": "status-proposal",
+        "Negotiation": "status-negotiation",
+        "Won": "status-won",
+        "Lost": "status-lost",
+        "Follow up Later": "status-follow"
+      };
+      return map[status] || "status-new";
+    }
+
+    function formatCurrency(value) {
+      const number = Number(value || 0);
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0
+      }).format(number);
+    }
+
+    function formatDate(value) {
+      if (!value) return "-";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "-";
+      return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    }
+
+    function nowIso() {
+      return new Date().toISOString();
+    }
+
+    function todayIso() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function daysAgo(days) {
+      return addDays(todayIso(), -days);
+    }
+
+    function daysFromNow(days) {
+      return addDays(todayIso(), days);
+    }
+
+    function addDays(base, offset) {
+      const date = new Date(base);
+      date.setDate(date.getDate() + offset);
+      return date.toISOString().slice(0, 10);
+    }
+
+    function daysBetween(dateA, dateB) {
+      if (!dateA || !dateB) return 0;
+      const a = new Date(dateA);
+      const b = new Date(dateB);
+      if (Number.isNaN(a.getTime()) || Number.isNaN(b.getTime())) return 0;
+      // Dates are stored in YYYY-MM-DD, so this comparison stays easy to explain in class.
+      const diff = b.getTime() - a.getTime();
+      return Math.floor(diff / (1000 * 60 * 60 * 24));
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+  </script>
+</body>
+</html>
