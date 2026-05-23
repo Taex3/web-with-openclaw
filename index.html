@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infernal Breach</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="cabinet">
+    <section class="screen-wrap">
+      <canvas id="game" width="320" height="180" aria-label="Infernal Breach game canvas"></canvas>
+      <div class="crt-lines"></div>
+      <div id="damageFlash"></div>
+      <div id="muzzleFlash"></div>
+
+      <div id="startScreen" class="overlay">
+        <div class="panel">
+          <h1>INFERNAL BREACH</h1>
+          <p>Retro plasma combat in a procedural steel maze.</p>
+          <button id="startButton">START MISSION</button>
+          <div class="controls">
+            WASD MOVE · MOUSE LOOK · CLICK FIRE · SHIFT SPRINT · M MAP · ESC PAUSE
+          </div>
+        </div>
+      </div>
+
+      <div id="pauseScreen" class="overlay hidden">
+        <div class="panel compact">
+          <h2>PAUSED</h2>
+          <button id="resumeButton">RESUME</button>
+          <button id="restartButton">RESTART RUN</button>
+        </div>
+      </div>
+
+      <div id="gameOverScreen" class="overlay hidden">
+        <div class="panel">
+          <h2>BREACH FAILED</h2>
+          <p id="finalStats"></p>
+          <button id="retryButton">TRY AGAIN</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="hud">
+      <div class="stat">
+        <span>HEALTH</span>
+        <strong id="health">100</strong>
+      </div>
+      <div class="stat">
+        <span>ARMOR</span>
+        <strong id="armor">50</strong>
+      </div>
+      <div class="portrait" id="face">
+        <div class="eyes"></div>
+        <div class="mouth"></div>
+      </div>
+      <div class="stat">
+        <span>AMMO</span>
+        <strong id="ammo">80</strong>
+      </div>
+      <div class="weapons" aria-label="Weapon slots">
+        <div class="slot active">1</div>
+        <div class="slot">2</div>
+        <div class="slot">3</div>
+        <div class="slot">4</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
