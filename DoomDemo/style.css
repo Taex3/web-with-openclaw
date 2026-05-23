@@ -1,0 +1,310 @@
+@font-face {
+  font-family: "RetroBlock";
+  src: local("Courier New");
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(120, 13, 18, 0.3), transparent 35%),
+    linear-gradient(135deg, #090909 0%, #17100f 48%, #050505 100%);
+  color: #f2d889;
+  font-family: RetroBlock, "Courier New", monospace;
+  image-rendering: pixelated;
+}
+
+body {
+  display: grid;
+  place-items: center;
+}
+
+.cabinet {
+  width: min(100vw, 1280px);
+  height: min(100vh, 820px);
+  display: grid;
+  grid-template-rows: 1fr 132px;
+  gap: 0;
+  border: 8px solid #181818;
+  background: #080606;
+  box-shadow:
+    0 0 0 4px #4d2521,
+    0 24px 80px rgba(0, 0, 0, 0.9),
+    inset 0 0 36px rgba(255, 92, 28, 0.15);
+}
+
+.screen-wrap {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+#game {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  filter: contrast(1.12) saturate(1.15);
+}
+
+.screen-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at center, transparent 42%, rgba(0, 0, 0, 0.42) 82%, rgba(0, 0, 0, 0.82) 100%),
+    linear-gradient(rgba(255, 60, 20, 0.04), rgba(30, 160, 255, 0.03));
+  mix-blend-mode: screen;
+}
+
+.crt-lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.32;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.07) 0,
+      rgba(255, 255, 255, 0.07) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+}
+
+#damageFlash,
+#muzzleFlash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+#damageFlash {
+  background: rgba(255, 0, 0, 0.38);
+}
+
+#muzzleFlash {
+  background:
+    radial-gradient(circle at 50% 75%, rgba(94, 220, 255, 0.8), rgba(12, 120, 255, 0.25) 18%, transparent 42%);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.68), rgba(0, 0, 0, 0.78)),
+    repeating-linear-gradient(45deg, rgba(255, 70, 20, 0.06) 0 8px, transparent 8px 16px);
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.panel {
+  width: min(620px, calc(100vw - 40px));
+  padding: 28px;
+  border: 4px solid #7a3326;
+  background: #111;
+  box-shadow: inset 0 0 0 4px #271211, 0 0 40px rgba(255, 62, 10, 0.25);
+  text-align: center;
+}
+
+.panel.compact {
+  width: min(420px, calc(100vw - 40px));
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  color: #ffef9c;
+  font-size: clamp(2.2rem, 7vw, 5.5rem);
+  line-height: 0.9;
+  text-shadow: 4px 4px 0 #6e1512, 0 0 22px rgba(255, 92, 20, 0.35);
+}
+
+h2 {
+  color: #ffef9c;
+  font-size: clamp(2rem, 6vw, 4rem);
+  text-shadow: 3px 3px 0 #6e1512;
+}
+
+.panel p {
+  margin-top: 16px;
+  color: #c7b78b;
+  font-size: 1rem;
+}
+
+button {
+  margin-top: 22px;
+  padding: 14px 22px;
+  border: 3px solid #88e7ff;
+  background: #122938;
+  color: #e6fbff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  cursor: pointer;
+  box-shadow: inset 0 -5px 0 #071016, 0 0 20px rgba(67, 204, 255, 0.28);
+}
+
+button:hover,
+button:focus-visible {
+  background: #174b66;
+  outline: none;
+}
+
+.controls {
+  margin-top: 18px;
+  color: #8ea0a8;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.hud {
+  display: grid;
+  grid-template-columns: 1fr 1fr 116px 1fr 1.4fr;
+  gap: 10px;
+  align-items: stretch;
+  padding: 10px;
+  border-top: 6px solid #3a1915;
+  background:
+    linear-gradient(#343434 0 8px, transparent 8px),
+    repeating-linear-gradient(90deg, #171717 0 18px, #202020 18px 36px);
+}
+
+.stat,
+.weapons,
+.portrait {
+  border: 4px solid #0b0b0b;
+  background: linear-gradient(#3b3b3b, #151515);
+  box-shadow: inset 0 0 0 3px #646464;
+}
+
+.stat {
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.stat span {
+  color: #c6c6c6;
+  font-size: 0.75rem;
+}
+
+.stat strong {
+  color: #ffef80;
+  font-size: clamp(1.6rem, 4vw, 2.8rem);
+  line-height: 0.9;
+  text-shadow: 3px 3px 0 #500;
+}
+
+.portrait {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(#5b3a2e 0 14px, #bd8a67 14px 60%, #77513d 60%),
+    #9b6b4e;
+}
+
+.portrait::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 10px;
+  height: 14px;
+  background: #2c1a15;
+}
+
+.portrait .eyes {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  top: 42px;
+  height: 12px;
+  background:
+    linear-gradient(90deg, #111 0 24%, transparent 24% 76%, #111 76%),
+    linear-gradient(#ecdfc6, #ecdfc6);
+}
+
+.portrait .mouth {
+  position: absolute;
+  left: 36px;
+  right: 36px;
+  bottom: 24px;
+  height: 10px;
+  background: #2b0c0a;
+}
+
+.portrait.hurt {
+  filter: saturate(1.7) hue-rotate(-22deg);
+}
+
+.weapons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 8px;
+}
+
+.slot {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  color: #8f8f8f;
+  background: #111;
+  border: 3px solid #333;
+  font-size: clamp(1rem, 3vw, 2rem);
+  font-weight: 900;
+}
+
+.slot.active {
+  color: #dff8ff;
+  border-color: #63d8ff;
+  background: #123144;
+  box-shadow: 0 0 14px rgba(88, 207, 255, 0.35);
+}
+
+@media (max-width: 740px) {
+  .cabinet {
+    height: 100vh;
+    border-width: 4px;
+    grid-template-rows: 1fr 104px;
+  }
+
+  .hud {
+    grid-template-columns: 1fr 1fr 82px 1fr 1.2fr;
+    gap: 5px;
+    padding: 6px;
+  }
+
+  .stat,
+  .weapons,
+  .portrait {
+    border-width: 3px;
+  }
+
+  .weapons {
+    gap: 3px;
+    padding: 4px;
+  }
+}
